@@ -1,5 +1,6 @@
 # Canvass Analytics - Software Engineering Coding Challenges
-Michael Sarfati - 10-23-2018
+Michael Sarfati
+10-23-2018
 
 ## Run Instructions
 
