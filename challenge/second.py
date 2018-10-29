@@ -1,3 +1,4 @@
+import asyncio
 import datetime as dt
 from typing import Any, Callable, Iterable, List, Type, Tuple
 
@@ -55,7 +56,7 @@ def datetimeSortKey(item: list) -> dt.datetime:
     return item[5]
 
 
-def sortDatetime(*lists: list):
+async def sortDatetime(lst: list):
     '''
     Sorts a list by its datetime field.
 
@@ -63,11 +64,10 @@ def sortDatetime(*lists: list):
     :return: Nothing, produces sideeffect of sorted list.
     '''
 
-    for l in lists:
-        l.sort(key=datetimeSortKey)
+    lst.sort(key=datetimeSortKey)
 
 
-def analyzeCSV(filepath: str) -> Tuple[str, List[List[Any]]]:
+async def analyzeCSV(filepath: str) -> Tuple[str, List[List[Any]]]:
     '''
     Analyzes a CSV with the criteria provided for in the challenge.
 
@@ -93,9 +93,23 @@ def analyzeCSV(filepath: str) -> Tuple[str, List[List[Any]]]:
             if devID == '2':
                 dev2.append(item)
 
-    sortDatetime(dev1, dev2)
+    await asyncio.gather(
+        sortDatetime(dev1),
+        sortDatetime(dev2)
+    )
 
     return header, dev1 + dev2
+
+
+def analyzeCSVRunner(filepath: str) -> Tuple[str, List[List[Any]]]:
+    '''
+    Wrapper for requisite asynchronous calling of `analyzeCSV`
+
+    :param filepath: A string or buffer pointing to a valid filelike object.
+    :returns: The header column-names of the CSV, and all of its associated analyzed data.
+    '''
+
+    return asyncio.run(analyzeCSV(filepath))
 
 
 def writeCSV(filepath: str, header: List[Any], lst: List[List[Any]]):
