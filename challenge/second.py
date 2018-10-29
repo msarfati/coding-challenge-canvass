@@ -2,8 +2,11 @@ import datetime as dt
 from typing import Any, Callable, Iterable, List, Type, Tuple
 
 
+# A datetime format string
 STRFSLASH = '%m/%d/%y'
+# Another datetime format string used by our CSV
 STRFDASH = '%Y-%m-%d'
+# A custom-specified value to be used as NaN, useful for our sort's key comparitor
 DATETIME_NAN = dt.datetime(2499, 1, 1)
 
 
@@ -14,6 +17,7 @@ def parseDate(s: str) -> dt.datetime:
     :param s: A string expected to be convertable to a datetime object.
     :returns: A datetime.datetime representation of the string.
     '''
+
     if '/' in s:
         try:
             return dt.datetime.strptime(s, STRFSLASH)
@@ -36,6 +40,7 @@ def convertDate(d: dt.datetime) -> str:
     :param d: A datetime.datetime object.
     :returns: String representation of datetime.datetime.
     '''
+
     return d.strftime(STRFSLASH) if d is not DATETIME_NAN else ''
 
 
@@ -46,6 +51,7 @@ def datetimeSortKey(item: list) -> dt.datetime:
     :param item: List of expected type.
     :returns: The datetime key to be consumed by Python `sort`
     '''
+
     return item[5]
 
 
@@ -56,6 +62,7 @@ def sortDatetime(*lists: list):
     :param *lists: A variadic argument of any list.
     :return: Nothing, produces sideeffect of sorted list.
     '''
+
     for l in lists:
         l.sort(key=datetimeSortKey)
 
@@ -67,6 +74,7 @@ def analyzeCSV(filepath: str) -> Tuple[str, List[List[Any]]]:
     :param filepath: A string or buffer pointing to a valid filelike object.
     :returns: The header column-names of the CSV, and all of its associated analyzed data.
     '''
+
     with open(filepath, 'r+') as fp:
         header = fp.readline().strip()
         dev1 = []  # type: List[List[Any]]
@@ -78,6 +86,7 @@ def analyzeCSV(filepath: str) -> Tuple[str, List[List[Any]]]:
             devID = item[0]
             date = parseDate(item.pop().strip())
             item.append(date)
+
             if devID == '1':
                 dev1.append(item)
 
@@ -85,6 +94,7 @@ def analyzeCSV(filepath: str) -> Tuple[str, List[List[Any]]]:
                 dev2.append(item)
 
     sortDatetime(dev1, dev2)
+
     return header, dev1 + dev2
 
 
@@ -96,6 +106,7 @@ def writeCSV(filepath: str, header: List[Any], lst: List[List[Any]]):
     :param header: A comma-separated string of column names.
     :param lst: A two-dimensional list.
     '''
+
     with open(filepath, 'w+') as fp:
         fp.write('{0}{1}'.format(header, '\n'))
         for item in lst:
