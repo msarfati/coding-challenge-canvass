@@ -1,5 +1,5 @@
 # Canvass Analytics - Software Engineering Coding Challenges
-Michael Sarfati
+Michael Sarfati - 10-23-2018
 
 ## Run Instructions
 
@@ -23,8 +23,8 @@ A separate function `printableSequence` is used to render the data in the desire
 
 Due to time constraints, this is admittedly a naive implementation, relying on the simplicity of the standard library. I had experimented briefly with `pandas`, `numpy`, and `csv`, but found they were a bit too slow due to the overhead involved in these modules.
 
-Instead, my solution works closer to the bytestream of the CSV files, parsing out each line at a time. After parsing each row, and converting the `Date` field to a Pythonic Datetime object, the solution determines which `Device_ID` the row belongs to, and appends its respective lists. At the end of the parsing-and-collecting phase, both of the lists are sorted (using Python's standard sort, which uses [Timsort](https://en.wikipedia.org/wiki/Timsort)) and returned, and then written out to disk.
+Instead, my solution works closer to the bytestream of the CSV files, parsing out each line at a time. After parsing each row, and converting the `Date` field to a Pythonic Datetime object, the solution determines which `Device_ID` the row belongs to, and appends its respective lists. At the end of the parsing-and-collecting phase, both of the lists are then sorted asynchronously (using Python's standard sort, which uses [Timsort](https://en.wikipedia.org/wiki/Timsort)) and returned, and then written out to disk.
 
 Insertion sort is something I had considered in writing this application, however, this would have required a lot more time to write, verify, and manage Pythonic nuances in the implementation of an algorithm. Python does have such a solution contained in the `bisect` module; however, `bisect` has no support for sorting by keys in multidimensional arrays, as we are dealing with here when we want to sort each row by date. This lack of support is something that has been requested for a while in Python ( see https://bugs.python.org/issue4356 ). Other languages seem to have more native support for insertion sort (like Golang).
 
-If I was planning on building out a much larger and more scalable solution, I would spend time doing more research on . I suspect an efficient solution that it would involve writing a parser that works directly on the I/O stream of the data
+If I was planning on building out a much larger and more scalable solution, I would spend time doing more research on the most effective ways to tackle this. I suspect the most efficient solution that would involve writing a parser that works directly on the I/O stream of the data, and then performs insertion sort according to our criteria. This would also best be implemented in a compiled language, rather than interpreted one like Python.
